@@ -17,7 +17,7 @@ jobs:
       - name: Extract Android project
         run: |
           mkdir source
-          unzip Weather-History-source.zip -d source
+          unzip WeatherHistory-source.zip -d source
           PROJECT_DIR="$(dirname "$(find source -name settings.gradle.kts -print -quit)")"
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
