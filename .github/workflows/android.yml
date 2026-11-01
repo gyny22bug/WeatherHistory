@@ -1,0 +1,47 @@
+name: Build WeatherHistory APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: |
+          mkdir source
+          unzip Weather-History-source.zip -d source
+          PROJECT_DIR="$(dirname "$(find source -name settings.gradle.kts -print -quit)")"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        run: |
+          cd "$PROJECT_DIR"
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: WeatherHistory-APK
+          path: source/**/app/build/outputs/apk/debug/*.apk
